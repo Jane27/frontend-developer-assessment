@@ -1,23 +1,18 @@
-import { Button, Table } from 'react-bootstrap';
-import { useTodoListQuery } from '../../query/useTodoListQuery';
+import { Button, Table, Spinner } from 'react-bootstrap';
+import { useQueryClient } from '@tanstack/react-query';
+import { useTodoListQuery, useUpdateTodoMutation } from '../../query/useTodoListQuery';
 
 const TodoItemsContent = () => {
   const { data: items = [], isFetching } = useTodoListQuery();
-
-  async function getItems() {
-    try {
-      alert('todo');
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  const { mutate } = useUpdateTodoMutation();
+  const queryClient = useQueryClient();
 
   async function handleMarkAsComplete(item) {
-    try {
-      alert('todo');
-    } catch (error) {
-      console.error(error);
-    }
+    mutate({ ...item, isCompleted: !item.isCompleted });
+  }
+
+  async function getItems() {
+    queryClient.invalidateQueries({ queryKey: ['todoItems'] });
   }
 
   console.log(`Loading status: `, isFetching);
@@ -25,6 +20,7 @@ const TodoItemsContent = () => {
   return (
     <>
       <h1>
+        {isFetching && <Spinner />}
         Showing {items.length} Item(s){' '}
         <Button variant="primary" className="pull-right" onClick={() => getItems()}>
           Refresh
@@ -41,12 +37,16 @@ const TodoItemsContent = () => {
         </thead>
         <tbody>
           {items.map((item) => (
-            <tr key={item.id}>
+            <tr key={item.id} style={{ textDecoration: item.isCompleted ? 'line-through' : 'unset' }}>
               <td>{item.id}</td>
               <td>{item.description}</td>
               <td>
-                <Button variant="warning" size="sm" onClick={() => handleMarkAsComplete(item)}>
-                  Mark as completed
+                <Button
+                  variant={item.isCompleted ? 'success' : 'warning'}
+                  size="sm"
+                  onClick={() => handleMarkAsComplete(item)}
+                >
+                  {item.isCompleted ? 'Mark uncompleted' : 'Mark as completed'}
                 </Button>
               </td>
             </tr>

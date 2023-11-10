@@ -21,4 +21,15 @@ const useAddTodoMutation = () => {
   });
 };
 
-export { useTodoListQuery, useAddTodoMutation };
+const useUpdateTodoMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (todoItem) => updateTodoItem(todoItem),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['todoItems'] });
+    },
+  });
+};
+
+export { useTodoListQuery, useAddTodoMutation, useUpdateTodoMutation };
