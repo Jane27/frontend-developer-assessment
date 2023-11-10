@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
+import { useTodoListQuery } from '../../query/useTodoListQuery';
 
 const TodoItemsContent = () => {
-  const [items, setItems] = useState([]);
+  const { data: items = [], isFetching } = useTodoListQuery();
 
   async function getItems() {
     try {
@@ -19,6 +19,8 @@ const TodoItemsContent = () => {
       console.error(error);
     }
   }
+
+  console.log(`Loading status: `, isFetching);
 
   return (
     <>

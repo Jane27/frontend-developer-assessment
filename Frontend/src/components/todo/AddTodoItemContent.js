@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Container, Row, Col, Form, Stack } from 'react-bootstrap';
+import { useAddTodoMutation } from '../../query/useTodoListQuery';
 
 const AddTodoItemContent = () => {
   const [description, setDescription] = useState('');
   const [validated, setValidated] = useState(false);
+
+  const { mutateAsync: addTodo } = useAddTodoMutation();
 
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
@@ -20,6 +23,9 @@ const AddTodoItemContent = () => {
     if (!form.checkValidity()) {
       return;
     }
+
+    // Validation passed, trigger add todo mutation to API
+    await addTodo(description);
 
     // Clear form after succeed
     handleClear();
