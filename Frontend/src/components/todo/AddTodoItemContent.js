@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Button, Container, Row, Col, Form, Stack } from 'react-bootstrap';
 import { useAddTodoMutation } from '../../query/useTodoListQuery';
+import ErrorAlert from '../ErrorAlert';
 
 const AddTodoItemContent = () => {
   const [description, setDescription] = useState('');
   const [validated, setValidated] = useState(false);
 
-  const { mutateAsync: addTodo } = useAddTodoMutation();
+  const { mutateAsync: addTodo, error } = useAddTodoMutation();
+  const serverError = error?.response?.data;
 
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
@@ -57,6 +59,7 @@ const AddTodoItemContent = () => {
             <Form.Control.Feedback type="invalid">Description is required.</Form.Control.Feedback>
           </Col>
         </Form.Group>
+        {serverError && <ErrorAlert message={serverError} />}
         <Form.Group as={Row} className="mb-3 offset-md-2" controlId="formAddTodoItem">
           <Stack direction="horizontal" gap={2}>
             <Button variant="primary" type="submit">
