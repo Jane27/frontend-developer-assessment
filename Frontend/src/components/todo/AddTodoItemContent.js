@@ -23,6 +23,7 @@ const AddTodoItemContent = () => {
 
     const form = event.currentTarget;
     if (!form.checkValidity()) {
+      // Validation failed.
       return;
     }
 
